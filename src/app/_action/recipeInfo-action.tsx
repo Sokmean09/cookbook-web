@@ -12,25 +12,25 @@ export async function getRecipeInfoByRecipeId(recipeid: number) {
     });
 }
 
-export async function createRecipeInfo(recipeInfo: any) {
+export async function createRecipeInfo(recipeInfo: RecipeInfo) {
     return await prisma.recipeInfo.create({
         data: {
-            prepTime: recipeInfo[0],
-            cookTime: recipeInfo[1],
-            servings: recipeInfo[2],
-            recipeId: recipeInfo[3],
+            prepTime: recipeInfo.prepTime,
+            cookTime: recipeInfo.cookTime,
+            servings: recipeInfo.servings,
+            recipeId: recipeInfo.recipeId,
         },
     });
 }
 
-export async function updateRecipeInfo(id: number, recipeInfo: any) {
+export async function updateRecipeInfo(id: number, recipeInfo: RecipeInfo) {
     return await prisma.recipeInfo.update({
         where: {id: id},
         data: {
-            prepTime: recipeInfo[0],
-            cookTime: recipeInfo[1],
-            servings: recipeInfo[2],
-            recipeId: recipeInfo[3],
+            prepTime: recipeInfo.prepTime,
+            cookTime: recipeInfo.cookTime,
+            servings: recipeInfo.servings,
+            recipeId: recipeInfo.recipeId,
         },
     });
 }

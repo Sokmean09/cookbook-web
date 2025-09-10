@@ -12,21 +12,21 @@ export async function getGalleryByRecipeId(recipeid: number) {
 	});
 }
 
-export async function createGallery(gallery: any) {
+export async function createGallery(gallery: Gallery) {
     return await prisma.gallery.create({
         data: {
-            image: gallery[0],
-            recipeId: gallery[1],
+            image: gallery.image,
+            recipeId: gallery.recipeId,
         },
     });
 }
 
-export async function updateGallery(id: number, gallery: any) {
+export async function updateGallery(id: number, gallery: Gallery) {
     return await prisma.gallery.update({
         where: { id: id },
         data: {
-            image: gallery[0],
-            recipeId: gallery[1],
+            image: gallery.image,
+            recipeId: gallery.recipeId,
         },
     });
 }

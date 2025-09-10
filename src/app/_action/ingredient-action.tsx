@@ -12,23 +12,23 @@ export async function getIngredientByRecipeId(recipeid: number) {
 	});
 }
 
-export async function createIngredient(ingredients: any) {
+export async function createIngredient(ingredients: Ingredients) {
     return await prisma.ingredients.create({
         data: {
-            name: ingredients[0],
-            quantity: ingredients[1],
-            recipeId: ingredients[2],
+            name: ingredients.name,
+            quantity: ingredients.quantity,
+            recipeId: ingredients.recipeId,
         },
     });
 }
 
-export async function updateIngredient(id: number, ingredients: any) {
+export async function updateIngredient(id: number, ingredients: Ingredients) {
     return await prisma.ingredients.update({
         where: { id: id },
         data: {
-            name: ingredients[0],
-            quantity: ingredients[1],
-            recipeId: ingredients[2],
+            name: ingredients.name,
+            quantity: ingredients.quantity,
+            recipeId: ingredients.recipeId,
         },
     });
 }

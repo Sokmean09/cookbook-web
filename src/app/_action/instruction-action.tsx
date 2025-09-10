@@ -12,23 +12,23 @@ export async function getInstructionByRecipeId(recipeid: number) {
 	});
 }
 
-export async function createInstruction(instructions: any) {
+export async function createInstruction(instructions: Instructions) {
     return await prisma.instructions.create({
         data: {
-            step: instructions[0],
-            content: instructions[1],
-            recipeId: instructions[2],
+            step: instructions.step,
+            content: instructions.content,
+            recipeId: instructions.recipeId,
         },
     });
 }
 
-export async function updateInstruction(id: number, instructions: any) {
+export async function updateInstruction(id: number, instructions: Instructions) {
     return await prisma.instructions.update({
         where: { id: id },
         data: {
-            step: instructions[0],
-            content: instructions[1],
-            recipeId: instructions[2],
+            step: instructions.step,
+            content: instructions.content,
+            recipeId: instructions.recipeId,
         },
     });
 }

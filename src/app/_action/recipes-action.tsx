@@ -19,27 +19,27 @@ export async function getRecipeBySlug(slug: string) {
 	});
 }
 
-export async function createRecipe(recipe: any) {
+export async function createRecipe(recipe: Recipes) {
 	return await prisma.recipes.create({
 		data: {
-			name: recipe[0],
-			slug: slugify(recipe[0]),
-			description: recipe[1],
-			image: recipe[2],
-			theme: recipe[3],
+			name: recipe.name,
+			slug: slugify(recipe.name),
+			description: recipe.description,
+			image: recipe.image,
+			theme: recipe.theme,
 		},
 	});
 }
 
-export async function updateRecipe(id: number, recipe: any) {
+export async function updateRecipe(id: number, recipe: Recipes) {
 	return await prisma.recipes.update({
 		where: { id: id },
 		data: {
-			name: recipe[0],
-			slug: slugify(recipe[0]),
-            description: recipe[1],
-            image: recipe[2],
-            theme: recipe[3],
+			name: recipe.name,
+			slug: slugify(recipe.name),
+			description: recipe.description,
+			image: recipe.image,
+			theme: recipe.theme,
 		},
 	});
 }
