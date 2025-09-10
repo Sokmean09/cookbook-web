@@ -23,12 +23,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="h-full">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased h-full flex flex-col`}
       >
-        {children}
+        <main className="flex-1 bg-gray-300">
+          {children}
+        </main>
+        <footer className="text-center text-gray-400 bg-indigo-950 py-4">
+          © {new Date().getFullYear()} Cookbook Web
+        </footer>
       </body>
     </html>
   );
 }
+
