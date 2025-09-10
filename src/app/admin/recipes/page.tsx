@@ -10,6 +10,7 @@ import { Recipes } from "../../../../generated/prisma";
 import { createRecipe, deleteRecipe, getRecipes, updateRecipe } from "@/app/_action/recipes-action";
 import { Textarea } from "@/components/ui/textarea";
 import { uploadFile } from "@/utils/uploadFile";
+import { slugify } from "@/utils/slugify";
 
 export default function RecipesStudio() {
 
@@ -67,7 +68,15 @@ export default function RecipesStudio() {
 			
 		}
 
-		const recipe = [name, description, imagePath, theme];
+		const recipe: Recipes = {
+			id: 0, 
+			name: name,
+			slug: slugify(name),
+			description: description!,
+			image: imagePath,
+			theme: theme,
+			createdAt: new Date(),
+		};
 		await createRecipe(recipe);
 
 		const data = await getRecipes();
@@ -102,7 +111,15 @@ export default function RecipesStudio() {
 			console.log(data.filePath);
 			
 		}
-		const recipe = [name, description, imagePath, theme];
+		const recipe: Recipes = {
+			id: 0, 
+			name: name,
+			slug: slugify(name),
+			description: description!,
+			image: imagePath,
+			theme: theme,
+			createdAt: new Date(),
+		};
 		await updateRecipe(id, recipe);
 
 		const data = await getRecipes();
