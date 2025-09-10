@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { getRecipeBySlug } from "@/app/_action/recipes-action";
 import { getGalleryByRecipeId } from "@/app/_action/gallery-action";
-import { Gallery, Ingredients, Instructions, RecipeInfo } from "../../../../../generated/prisma";
+import { Gallery, Ingredients, Instructions, RecipeInfo, Recipes } from "../../../../../generated/prisma";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -18,7 +18,7 @@ import { getRecipeInfoByRecipeId } from "@/app/_action/recipeInfo-action";
 export default function RecipePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = React.use(params);
 
-  const [recipe, setRecipe] = useState<any>(null);
+  const [recipe, setRecipe] = useState<Recipes>();
   const [gallery, setGallery] = useState<Gallery[]>([]);
   const [ingredient, setIngredient] = useState<Ingredients[]>([]);
   const [instruction, setInstruction] = useState<Instructions[]>([]);
@@ -27,7 +27,9 @@ export default function RecipePage({ params }: { params: Promise<{ slug: string 
   useEffect(() => {
     const fetchData = async () => {
       const data = await getRecipeBySlug(slug);
-      setRecipe(data);
+      if (data) {
+        setRecipe(data);
+      }
 
       if (data?.id) {
         const galleryData = await getGalleryByRecipeId(data.id);
