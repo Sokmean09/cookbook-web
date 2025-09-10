@@ -59,7 +59,12 @@ export default function GalleryStudio() {
             
         }
 
-        const gallery = [imagePath, recipeId];
+        const gallery: Gallery = {
+            id: 0, 
+            image: imagePath,
+            recipeId: recipeId!,
+            createdAt: new Date(),
+        };
         await createGallery(gallery);
 
         const data = await getGallery();
@@ -93,7 +98,12 @@ export default function GalleryStudio() {
             
         }
 
-        const gallery = [imagePath, recipeId];
+        const gallery: Gallery = {
+            id: 0, 
+            image: imagePath,
+            recipeId: recipeId!,
+            createdAt: new Date(),
+        };
         await updateGallery(id, gallery);
 
         const data = await getGallery();
