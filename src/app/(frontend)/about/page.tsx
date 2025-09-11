@@ -1,26 +1,82 @@
+"use client";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import Image from "next/image";
+import Link from "next/link";
+import { Facebook, Twitter, Instagram, Github, Linkedin } from "lucide-react";
+import { SiGithub, SiLinkedin, SiX, SiFacebook, SiInstagram } from "react-icons/si";
+
 export default function About() {
+	
 	return (
-		<div className="max-w-2xl mx-auto py-12 px-4">
-			<h1 className="text-4xl font-bold mb-4">About Cookbook</h1>
-			<p className="text-lg mb-6 text-muted-foreground">
-				Welcome to <span className="font-semibold">Cookbook</span>! This
-				platform is built with{" "}
-				<span className="font-semibold">React</span>,{" "}
-				<span className="font-semibold">Next.js</span>,{" "}
-				<span className="font-semibold">Tailwind CSS</span>, and{" "}
-				<span className="font-semibold">shadcn/ui</span> to provide a
-				modern, fast, and beautiful recipe sharing experience.
-			</p>
-			<div className="rounded-lg border p-6 bg-background shadow-sm">
-				<h2 className="text-2xl font-semibold mb-2">Our Mission</h2>
-				<p>
-					CookbookWeb empowers home cooks and food lovers to discover,
-					share, and organize their favorite recipes. Whether you’re a
-					seasoned chef or just starting out, our community-driven
-					platform makes it easy to find inspiration and connect with
-					others.
+		<div className="min-h-screen flex flex-col">
+			{/* Hero */}
+			<section className="bg-gradient-to-r from-orange-400 via-red-400 to-pink-500 text-white py-40 text-center">
+				<h1 className="text-5xl font-extrabold mb-16">About Cookbook</h1>
+				<p className="max-w-2xl mx-auto text-2xl">
+					We created Cookbook to make it easier for people to share, discover,
+					and enjoy recipes from around the world with different cultures and
+					traditions. Our mission is to inspire home cooks and food enthusiasts
+					to explore new flavors and culinary techniques.
 				</p>
-			</div>
+			</section>
+
+			{/* CTA */}
+			<section className="py-40 px-6 text-center">
+				<h2 className="text-2xl font-bold mb-4">Want to Join Our Community?</h2>
+				<p className="mb-6 text-gray-600">
+					Share your own recipes and explore thousands of dishes from home cooks
+					worldwide.
+				</p>
+				<Button asChild>
+					<Link href="/recipes">Start Exploring</Link>
+				</Button>
+			</section>
+
+			{/* Contact */}
+			<section className="py-40 px-6 bg-gray-100">
+				<h2 className="text-3xl font-bold mb-6 text-center">Contact Us</h2>
+				<form className="max-w-2xl mx-auto space-y-4">
+					<div>
+						<Input type="text" placeholder="Name" required />
+					</div>
+					<div>
+						<Input type="email" placeholder="Email" required />
+					</div>
+					<div>
+						<Textarea placeholder="Message" rows={5} required />
+					</div>
+					<div className="text-center">
+						<Button type="submit" className="w-full sm:w-auto">
+							Send Message
+						</Button>
+					</div>
+				</form>
+
+				{/* Social Links */}
+				<div className="mt-8 flex justify-center gap-6">
+					<a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+						<SiFacebook size={32} className="text-gray-700 hover:text-blue-600 transition" />
+					</a>
+					<a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
+						<SiX size={32} className="text-gray-700 hover:text-sky-500 transition" />
+					</a>
+					<a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+						<SiInstagram size={32} className="text-gray-700 hover:text-pink-500 transition" />
+					</a>
+					<a href="https://github.com" target="_blank" rel="noopener noreferrer">
+						<SiGithub size={32} className="text-gray-700 hover:text-gray-900 transition" />
+					</a>
+					<a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
+						<SiLinkedin size={32} className="text-gray-700 hover:text-blue-700 transition" />
+					</a>
+				</div>
+
+			</section>
+
 		</div>
 	);
 }
