@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import AuthProvider from "./_components/AuthProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,7 +29,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased h-full flex flex-col`}
       >
         <main className="flex-1 bg-gray-300">
-          {children}
+          <AuthProvider>
+            {children}
+          </AuthProvider>
         </main>
         <footer className="text-center text-gray-400 bg-indigo-950 py-4">
           © {new Date().getFullYear()} Cookbook Web

@@ -1,35 +1,71 @@
 'use client';
+import { Button } from "@/components/ui/button";
+import { LogOut } from "lucide-react";
 import Link from "next/link";
 import { useSelectedLayoutSegment } from "next/navigation";
+import { useAuth } from "../_components/AuthProvider";
 
 export default function MainNavi() {
-    const segment = useSelectedLayoutSegment();
-    const navClass = "px-5 py-3 rounded-full text-white"
-    const activeNavClass = `${navClass} bg-indigo-400`;
-    return (
-        <nav className=" bg-indigo-950 justify-items-center lg:justify-items-end lg:px-77">
-            <ul className="flex  py-6 gap-x-4 font-bold">
-                <li>
-                    <Link href="/" className={segment == null ? activeNavClass : navClass}>
-                        Home
-                    </Link>
-                </li>
-                <li>
-                    <Link href="/recipes" className={segment == 'recipes' ? activeNavClass : navClass}>
-                        Recipes
-                    </Link>
-                </li>
-                <li>
-                    <Link href="/about" className={segment == 'about' ? activeNavClass : navClass}>
-                        About
-                    </Link>
-                </li>
-                <li>
-                    <Link href="/admin" className={segment == 'admin' ? activeNavClass : navClass}>
-                        Admin
-                    </Link>
-                </li>
-            </ul>
-        </nav>
-    );
+  const segment = useSelectedLayoutSegment();
+  const navClass = "px-5 py-3 rounded-full text-white"
+  const activeNavClass = `${navClass} bg-indigo-400`;
+
+  const { currentUser, handleLogout } = useAuth();
+
+  return (
+    <nav className="bg-indigo-950 px-6 lg:px-42">
+      <div className="flex items-center justify-between">
+        <ul className="flex py-6 gap-x-6 font-bold">
+          <li>
+            <Link
+              href="/"
+              className={segment == null ? activeNavClass : navClass}
+            >
+              Home
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/recipes"
+              className={segment == "recipes" ? activeNavClass : navClass}
+            >
+              Recipes
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/about"
+              className={segment == "about" ? activeNavClass : navClass}
+            >
+              About
+            </Link>
+          </li>
+          {currentUser?.role === "admin" && (
+            <li>
+              <Link
+                href="/admin"
+                className={segment == "admin" ? activeNavClass : navClass}
+              >
+                Admin
+              </Link>
+            </li>
+          )}
+        </ul>
+
+        {currentUser && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-white hover:text-white! hover:bg-red-400"
+            onClick={() => {
+              handleLogout();
+            }}
+          >
+            <LogOut className="h-5 w-5" />
+            <span className="sr-only">Logout</span>
+          </Button>
+        )}
+      </div>
+    </nav>
+  )
 }
