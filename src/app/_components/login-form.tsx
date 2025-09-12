@@ -6,6 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@radix-ui/react-label";
 import { useAuth } from "./AuthProvider";
+import Link from "next/link";
 
 export function LoginForm() {
   const { handleLogin } = useAuth();
@@ -66,8 +67,16 @@ export function LoginForm() {
             )}
           </div>
 
+          {/* register */}
+          <p className="text-sm text-center mt-4">
+            Don’t have an account?{" "}
+            <Link href="/register" className="text-blue-600 hover:underline">
+              Register
+            </Link>
+          </p>
+
           {/* Submit */}
-          <Button disabled={pending} type="submit" className="w-full mt-8">
+          <Button disabled={pending} type="submit" className="w-full mt-8 hover:cursor-pointer">
             {pending ? "Logging in..." : "Login"}
           </Button>
         </form>

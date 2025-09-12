@@ -56,7 +56,7 @@ export default function MainNavi() {
           <Button
             variant="ghost"
             size="icon"
-            className="text-white hover:text-white! hover:bg-red-400"
+            className="text-white hover:text-white! hover:bg-red-400 hover:cursor-pointer"
             onClick={() => {
               handleLogout();
             }}

@@ -79,8 +79,6 @@ export default function AuthProvider({ children }: AuthProviderProps) {
           errors: { email: ["Invalid email or password"] },
         };
       }
-
-      console.log(res.json);
       const { authToken, user } = await res.json();
 
       setAuthToken(authToken); 

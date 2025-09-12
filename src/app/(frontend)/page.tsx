@@ -36,12 +36,12 @@ export default function Home() {
         </p>
         <div className="flex justify-center gap-4">
           <Link href="/recipes">
-            <Button variant="secondary" size="lg">
+            <Button variant="secondary" size="lg" className="hover:cursor-pointer">
               Browse Recipes
             </Button>
           </Link>
           <Link href="/add-recipe">
-            <Button variant="outline" size="lg" className="bg-white text-black">
+            <Button variant="secondary" size="lg" className="hover:cursor-pointer">
               Add Your Recipe
             </Button>
           </Link>
