@@ -4,25 +4,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import Link from "next/link";
+import { getRandomRecipes, getRecipes } from "../_action/recipes-action";
+import { useEffect, useState } from "react";
+import { Recipes } from "../../../generated/prisma";
 
 export default function Home() {
-  const featuredRecipes = [
-    {
-      id: 1,
-      name: "Spaghetti Carbonara",
-      image: "https://picsum.photos/400/300?random=1",
-    },
-    {
-      id: 2,
-      name: "Avocado Toast",
-      image: "https://picsum.photos/400/300?random=2",
-    },
-    {
-      id: 3,
-      name: "Chicken Curry",
-      image: "https://picsum.photos/400/300?random=3",
-    },
-  ];
+  const [recipes, setRecipes] = useState<Recipes[]>([]);
+
+  useEffect(() => {
+    async function fetchRecipes() {
+      const data = await getRandomRecipes(3);
+      setRecipes(data);
+    }
+    fetchRecipes();
+  }, []);
 
   const categories = ["Breakfast", "Lunch", "Dinner", "Desserts", "Drinks"];
 
@@ -48,19 +43,19 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured Recipes */}
+      {/* random Recipes */}
       <section className="py-12 px-6 max-w-6xl mx-auto w-full">
         <h2 className="text-3xl font-bold mb-6 text-center">
-          Featured Recipes
+          Random Recipes
         </h2>
         <div className="grid gap-6 md:grid-cols-3">
-          {featuredRecipes.map((recipe) => (
+          {recipes.map((recipe) => (
             <Card
               key={recipe.id}
               className="overflow-hidden hover:shadow-xl transition-shadow"
             >
               <Image
-                src={recipe.image}
+                src={recipe.image ?? "/no-image.jpg"}
                 alt={recipe.name}
                 width={400}
                 height={300}
@@ -71,7 +66,7 @@ export default function Home() {
               </CardHeader>
               <CardContent>
                 <Button asChild className="w-full">
-                  <Link href={`/recipes/${recipe.id}`}>View Recipe</Link>
+                  <Link href={`/recipe/${recipe.slug}`}>View Recipe</Link>
                 </Button>
               </CardContent>
             </Card>

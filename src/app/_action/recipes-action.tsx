@@ -49,3 +49,10 @@ export async function deleteRecipe(id: number) {
         where: { id: id },
     });
 }
+
+export async function getRandomRecipes(limit = 3): Promise<Recipes[]> {
+  const recipes = await prisma.recipes.findMany();
+  // Shuffle array
+  const shuffled = recipes.sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, limit);
+}
