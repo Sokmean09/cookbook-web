@@ -3,6 +3,7 @@
 import { getUserByEmail, createUser } from "@/app/_action/user-action";
 import { NextResponse } from "next/server";
 import { Users } from "../../../../generated/prisma";
+import bcrypt from "bcryptjs";
 
 export async function POST(req: Request) {
   try {
@@ -16,7 +17,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // Check if user already exists
     const existingUser = await getUserByEmail(email);
     if (existingUser) {
       return NextResponse.json(
@@ -25,13 +25,13 @@ export async function POST(req: Request) {
       );
     }
 
-    // Create new user
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const newUser = await createUser({
-      id: 0,
       name: name ?? "",
       email,
-      role: "user", // default role
-      password,
+      role: "user",
+      password: hashedPassword,
     } as Users);
 
     return NextResponse.json(

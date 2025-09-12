@@ -69,7 +69,7 @@ export default function RecipePage({ params }: { params: Promise<{ slug: string 
     }
 
   return (
-    <div className="container mx-auto max-w-5xl py-10 px-4">
+    <div className="container mx-auto max-w-6xl py-12 px-12 bg-gray-200">
       {/* Back Button */}
       <div className="mb-6">
         <Button asChild variant="outline">
