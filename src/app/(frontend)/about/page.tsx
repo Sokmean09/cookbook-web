@@ -1,12 +1,9 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import Image from "next/image";
 import Link from "next/link";
-import { Facebook, Twitter, Instagram, Github, Linkedin } from "lucide-react";
 import { SiGithub, SiLinkedin, SiX, SiFacebook, SiInstagram } from "react-icons/si";
 
 export default function About() {

@@ -15,7 +15,7 @@ type AuthContext = {
   authToken?: string | null;
   currentUser?: Users | null;
   handleLogin: (
-    prevState: any,
+    prevState: unknown,
     formData: FormData
   ) => Promise<{ errors?: Record<string, string[]> } | void>;
   handleLogout: () => Promise<void>;
@@ -56,7 +56,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     fetchUser();
   }, []);
 
-  async function handleLogin(prevState: any, formData: FormData) {
+  async function handleLogin(prevState: unknown, formData: FormData) {
     try {
       const result = loginSchema.safeParse(Object.fromEntries(formData));
 
