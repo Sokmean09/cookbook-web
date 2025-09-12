@@ -51,7 +51,7 @@ export default function MainNavi() {
             </li>
           )}
         </ul>
-
+          
         {currentUser && (
           <Button
             variant="ghost"
@@ -65,6 +65,7 @@ export default function MainNavi() {
             <span className="sr-only">Logout</span>
           </Button>
         )}
+        
       </div>
     </nav>
   )

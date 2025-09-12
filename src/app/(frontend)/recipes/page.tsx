@@ -1,16 +1,31 @@
+"use client"
 import RecipesCardList from "@/app/_components/recipes/recipesCard";
-import React from "react";
+import { SearchModal } from "@/app/_components/search-modal";
+import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
+import React, { useState } from "react";
 
 export default function Recipes() {
+	const [openSearch, setOpenSearch] = useState(false);
 	return (
-		<div>
-			<div>Recipes</div>
-      <div className="mx-6">
-        <h1 className="font-medium text-4xl my-6">
-          All Recipes
-        </h1>
-			  <RecipesCardList />
+		<div className="mx-10 my-10">
+      <div className="flex">  
+        <Button
+          className="bg-background hover:bg-gray-100 w-2xs justify-start"
+          onClick={() => setOpenSearch(true)}
+        >
+          <Search className="text-black mr-2" />
+          <span className="text-gray-500 font-normal">Search</span>
+        </Button>
       </div>
-		</div>
+
+      <div>
+        <h1 className="font-medium text-4xl my-6">All Recipes</h1>
+        <RecipesCardList />
+      </div>
+
+      {/* Modal */}
+      <SearchModal open={openSearch} setOpen={setOpenSearch} />
+    </div>
 	);
 }
