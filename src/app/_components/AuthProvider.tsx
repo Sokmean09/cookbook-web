@@ -8,8 +8,8 @@ import {
   useState,
 } from "react";
 import { Users } from "../../../generated/prisma";
-import z from "zod";
 import { useRouter } from "next/navigation";
+import { loginSchema } from "@/utils/CheckformSchema";
 
 type AuthContext = {
   authToken?: string | null;
@@ -24,14 +24,6 @@ type AuthContext = {
 const AuthContext = createContext<AuthContext | undefined>(undefined);
 
 type AuthProviderProps = PropsWithChildren;
-
-const loginSchema = z.object({
-  email: z.string().email({ message: "Invalid email address" }).trim(),
-  password: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters" })
-    .trim(),
-});
 
 export default function AuthProvider({ children }: AuthProviderProps) {
   const [authToken, setAuthToken] = useState<string | null>(null);

@@ -1,16 +1,15 @@
 'use client';
-import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
 import Link from "next/link";
 import { useSelectedLayoutSegment } from "next/navigation";
 import { useAuth } from "../_components/AuthProvider";
+import { AccountMenu } from "../_components/Account-menu";
 
 export default function MainNavi() {
   const segment = useSelectedLayoutSegment();
   const navClass = "px-5 py-3 rounded-full text-white"
   const activeNavClass = `${navClass} bg-indigo-400`;
 
-  const { currentUser, handleLogout } = useAuth();
+  const { currentUser } = useAuth();
 
   return (
     <nav className="bg-indigo-950 px-6 lg:px-42">
@@ -40,32 +39,8 @@ export default function MainNavi() {
               About
             </Link>
           </li>
-          {currentUser?.role === "admin" && (
-            <li>
-              <Link
-                href="/admin"
-                className={segment == "admin" ? activeNavClass : navClass}
-              >
-                Admin
-              </Link>
-            </li>
-          )}
         </ul>
-          
-        {currentUser && (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-white hover:text-white! hover:bg-red-400 hover:cursor-pointer"
-            onClick={() => {
-              handleLogout();
-            }}
-          >
-            <LogOut className="h-5 w-5" />
-            <span className="sr-only">Logout</span>
-          </Button>
-        )}
-        
+        <AccountMenu />
       </div>
     </nav>
   )

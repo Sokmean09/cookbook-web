@@ -19,8 +19,6 @@ export default function Home() {
     fetchRecipes();
   }, []);
 
-  const categories = ["Breakfast", "Lunch", "Dinner", "Desserts", "Drinks"];
-
   return (
     <div className="min-h-screen flex flex-col">
       {/* Hero Section */}
@@ -69,21 +67,6 @@ export default function Home() {
                   <Link href={`/recipe/${recipe.slug}`}>View Recipe</Link>
                 </Button>
               </CardContent>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      {/* Categories */}
-      <section className="py-12 px-6 bg-gray-50">
-        <h2 className="text-3xl font-bold mb-6 text-center">Browse by Category</h2>
-        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 max-w-6xl mx-auto">
-          {categories.map((category) => (
-            <Card
-              key={category}
-              className="p-6 text-center hover:bg-gray-100 transition cursor-pointer"
-            >
-              <CardTitle>{category}</CardTitle>
             </Card>
           ))}
         </div>

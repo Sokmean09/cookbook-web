@@ -3,19 +3,14 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { registerSchema } from "@/utils/CheckformSchema";
 import { Label } from "@radix-ui/react-label";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { z } from "zod";
-
-const registerSchema = z.object({
-  name: z.string().min(1, "Name is required").trim(),
-  email: z.string().email("Invalid email address").trim(),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-  confirmPassword: z.string().min(8, "Password must be at least 8 characters"),
-});
 
 export function RegisterForm() {
+  const router = useRouter()
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -61,9 +56,8 @@ export function RegisterForm() {
         return;
       }
 
-      console.log("Registered successfully", data.user);
-      // redirect to login
-      window.location.href = "/login";
+      console.log("Registered successfully");
+      router.push("/login")
     } catch (err) {
       console.error(err);
       setServerError("An unexpected error occurred");
@@ -80,16 +74,17 @@ export function RegisterForm() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+        <form className="flex flex-col gap-4" autoComplete="off" onSubmit={handleSubmit}>
           {/* Name */}
           <div className="flex flex-col gap-2">
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="name">Username</Label>
             <Input
               id="name"
               name="name"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Your name"
+              placeholder="Username"
+              autoComplete="new-username"
             />
             {errors.name && <p className="text-sm text-red-500">{errors.name.join(", ")}</p>}
           </div>
@@ -103,6 +98,7 @@ export function RegisterForm() {
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               placeholder="you@example.com"
+              autoComplete="new-email"
             />
             {errors.email && <p className="text-sm text-red-500">{errors.email.join(", ")}</p>}
           </div>
@@ -117,6 +113,7 @@ export function RegisterForm() {
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               placeholder="********"
+              autoComplete="new-password"
             />
             {errors.password && <p className="text-sm text-red-500">{errors.password.join(", ")}</p>}
           </div>
@@ -131,10 +128,9 @@ export function RegisterForm() {
               value={formData.confirmPassword}
               onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
               placeholder="********"
+              autoComplete="new-confirmPassword"
             />
-            {errors.confirmPassword && (
-              <p className="text-sm text-red-500">{errors.confirmPassword.join(", ")}</p>
-            )}
+            {errors.confirmPassword && <p className="text-sm text-red-500">{errors.confirmPassword.join(", ")}</p>}
           </div>
 
           {/* Server Error */}

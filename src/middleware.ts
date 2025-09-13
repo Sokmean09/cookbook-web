@@ -6,7 +6,8 @@ const protectedRoutes = [
   "/",
   "/recipes",
   "/about",
-  "/admin"
+  "/admin",
+  "/settings",
 ];
 const publicRoutes = [
   "/login",
