@@ -7,7 +7,7 @@ export async function getGallery(): Promise<Gallery[]> {
 }
 
 export async function getGalleryByRecipeId(recipeid: number) {
-	return await prisma.gallery.findFirst({
+	return await prisma.gallery.findMany({
 		where: { recipeId: recipeid },
 	});
 }

@@ -7,7 +7,7 @@ export async function getIngredients(): Promise<Ingredients[]> {
 }
 
 export async function getIngredientByRecipeId(recipeid: number) {
-	return await prisma.ingredients.findFirst({
+	return await prisma.ingredients.findMany({
 		where: { recipeId: recipeid },
 	});
 }

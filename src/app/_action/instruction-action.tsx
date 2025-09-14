@@ -7,7 +7,7 @@ export async function getInstructions(): Promise<Instructions[]> {
 }
 
 export async function getInstructionByRecipeId(recipeid: number) {
-	return await prisma.instructions.findFirst({
+	return await prisma.instructions.findMany({
 		where: { recipeId: recipeid },
 	});
 }
