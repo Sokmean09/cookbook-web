@@ -36,22 +36,49 @@ export default function AddRecipePage() {
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [theme, setTheme] = useState("");
 
-
     const [prepTime, setPrepTime] = useState<number | null>(null);
     const [cookTime, setCookTime] = useState<number | null>(null);
     const [servings, setServings] = useState<number | null>(null);
 
-
     const [ingredients, setIngredients] = useState([{ name: "", quantity: "" }]);
     const [instructions, setInstructions] = useState([{ step: 1, content: "" }]);
-
 
     const [gallery, setGallery] = useState([""]);
     const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
 
+    const isFormEmpty = !recipeName || !description || (!image && !imageFile);
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+
+    const validateRecipe = (): boolean => {
+        const newErrors: { [key: string]: string } = {};
+
+        if (!recipeName.trim()) newErrors.recipeName = "Recipe name is required.";
+        if (!description.trim()) newErrors.description = "Description is required.";
+        if (!image && !imageFile) newErrors.image = "Recipe image is required.";
+        if (!theme.trim()) newErrors.theme = "Theme is required.";
+        if (prepTime === null || prepTime < 0) newErrors.prepTime = "Prep time must be non-negative.";
+        if (cookTime === null || cookTime < 0) newErrors.cookTime = "Cook time must be non-negative.";
+        if (servings === null || servings <= 0) newErrors.servings = "Servings must be greater than 0.";
+
+        ingredients.forEach((ing, idx) => {
+            if (!ing.name.trim()) newErrors[`ingredients-${idx}-name`] = "Name is required.";
+            if (!ing.quantity.trim()) newErrors[`ingredients-${idx}-quantity`] = "Quantity is required.";
+        });
+
+        instructions.forEach((inst, idx) => {
+            if (!inst.content.trim()) newErrors[`instructions-${idx}-content`] = "Step content is required.";
+        });
+
+        setErrors(newErrors);
+
+        return Object.keys(newErrors).length === 0;
+    };
 
 
     const handleSaveRecipe = async () => {
+        if (!validateRecipe()) return;
+
         const id = await handleAddRecipe();
         if (!id) return;
         await handleAddRecipeInfo(id);
@@ -162,7 +189,7 @@ export default function AddRecipePage() {
 
     const handleAddGallery = async (recipeId: number) => {
         if (!recipeId) return;
-        
+
         // Sequentially
         // for (const element of galleryFiles) {
         //     const formData = new FormData();
@@ -242,9 +269,21 @@ export default function AddRecipePage() {
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <Input placeholder="Recipe Name" value={recipeName} onChange={(e) => setRecipeName(e.target.value)} />
+                            {errors.recipeName && (
+                                <p className="text-red-500 text-sm mt-1">{errors.recipeName}</p>
+                            )}
                             <Textarea placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} />
+                            {errors.description && (
+                                <p className="text-red-500 text-sm mt-1">{errors.description}</p>
+                            )}
                             <Input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] ?? null)} />
+                            {errors.image && (
+                                <p className="text-red-500 text-sm mt-1">{errors.image}</p>
+                            )}
                             <Input placeholder="Theme" value={theme} onChange={(e) => setTheme(e.target.value)} />
+                            {errors.theme && (
+                                <p className="text-red-500 text-sm mt-1">{errors.theme}</p>
+                            )}
                         </CardContent>
                     </Card>
                 </TabsContent>
@@ -256,23 +295,40 @@ export default function AddRecipePage() {
                             <CardTitle>Recipe Info</CardTitle>
                         </CardHeader>
                         <CardContent className="grid md:grid-cols-3 gap-4">
-                            <Input type="number" placeholder="Prep Time (minutes)" value={prepTime ?? ""} min={0}
-                                onChange={(e) => {
-                                    let val = Number(e.target.value)
-                                    setPrepTime(val)
-                                }} />
-                            <Input type="number" placeholder="Cook Time (minutes)" value={cookTime ?? ""} min={0}
-                                onChange={(e) => {
-                                    let val = Number(e.target.value)
-                                    setCookTime(val)
-                                }} />
-                            <Input type="number" placeholder="Servings" value={servings ?? ""} min={0} max={1000}
-                                onChange={(e) => {
-                                    let val = Number(e.target.value)
-                                    if (val < 0) val = 0
-                                    if (val > 1000) val = 1000
-                                    setServings(val)
-                                }} />
+                            <div>
+                                <Input type="number" placeholder="Prep Time (minutes)" value={prepTime ?? ""} min={0}
+                                    onChange={(e) => {
+                                        let val = Number(e.target.value)
+                                        setPrepTime(val)
+                                    }} />
+                                {errors.prepTime && (
+                                    <p className="text-red-500 text-sm mt-1">{errors.prepTime}</p>
+                                )}
+                            </div>
+
+                            <div>
+                                <Input type="number" placeholder="Cook Time (minutes)" value={cookTime ?? ""} min={0}
+                                    onChange={(e) => {
+                                        let val = Number(e.target.value)
+                                        setCookTime(val)
+                                    }} />
+                                {errors.cookTime && (
+                                    <p className="text-red-500 text-sm mt-1">{errors.cookTime}</p>
+                                )}
+                            </div>
+
+                            <div>
+                                <Input type="number" placeholder="Servings" value={servings ?? ""} min={0} max={1000}
+                                    onChange={(e) => {
+                                        let val = Number(e.target.value)
+                                        if (val < 0) val = 0
+                                        if (val > 1000) val = 1000
+                                        setServings(val)
+                                    }} />
+                                {errors.servings && (
+                                    <p className="text-red-500 text-sm mt-1">{errors.servings}</p>
+                                )}
+                            </div>
                         </CardContent>
                     </Card>
                 </TabsContent>
@@ -286,16 +342,23 @@ export default function AddRecipePage() {
                         <CardContent className="space-y-4">
                             {ingredients.map((ing, i) => (
                                 <div key={i} className="flex gap-2">
-                                    <Input
-                                        placeholder="Name"
-                                        value={ing.name}
-                                        onChange={(e) => {
-                                            const newIngs = [...ingredients]
-                                            newIngs[i].name = e.target.value
-                                            setIngredients(newIngs)
-                                        }}
-                                    />
-                                    <Input
+                                    <div className="w-full">
+                                        <Input
+                                            placeholder="Name"
+                                            value={ing.name}
+                                            onChange={(e) => {
+                                                const newIngs = [...ingredients]
+                                                newIngs[i].name = e.target.value
+                                                setIngredients(newIngs)
+                                            }}
+                                            className={errors[`ingredients-${i}-name`] ? "border-red-500" : ""}
+                                        />
+                                        {errors[`ingredients-${i}-name`] && (
+                                            <p className="text-red-500 text-sm mt-1">{errors[`ingredients-${i}-name`]}</p>
+                                        )}
+                                    </div>
+                                    <div className="w-full">
+                                        <Input
                                         placeholder="Quantity"
                                         value={ing.quantity}
                                         onChange={(e) => {
@@ -303,7 +366,12 @@ export default function AddRecipePage() {
                                             newIngs[i].quantity = e.target.value
                                             setIngredients(newIngs)
                                         }}
+                                        className={errors[`ingredients-${i}-quantity`] ? "border-red-500" : ""}
                                     />
+                                    {errors[`ingredients-${i}-quantity`] && (
+                                        <p className="text-red-500 text-sm mt-1">{errors[`ingredients-${i}-quantity`]}</p>
+                                    )}
+                                    </div>
                                     <Button
                                         type="button"
                                         variant="destructive"
@@ -333,7 +401,8 @@ export default function AddRecipePage() {
                         <CardContent className="space-y-4">
                             {instructions.map((inst, i) => (
                                 <div key={i} className="flex gap-2">
-                                    <Textarea
+                                    <div className="w-full">
+                                        <Textarea
                                         placeholder={`Step ${i + 1}`}
                                         value={inst.content}
                                         onChange={(e) => {
@@ -341,7 +410,12 @@ export default function AddRecipePage() {
                                             newInst[i].content = e.target.value
                                             setInstructions(newInst)
                                         }}
+                                        className={errors[`instructions-${i}-content`] ? "border-red-500" : ""}
                                     />
+                                    {errors[`instructions-${i}-content`] && (
+                                        <p className="text-red-500 text-sm mt-1">{errors[`instructions-${i}-content`]}</p>
+                                    )}
+                                    </div>
                                     <Button
                                         type="button"
                                         variant="destructive"
@@ -415,7 +489,7 @@ export default function AddRecipePage() {
             </Tabs>
 
             <div className="mt-8 flex justify-end">
-                <Button size="lg" className="hover:cursor-pointer" onClick={handleSaveRecipe}>Save Recipe</Button>
+                <Button size="lg" className="hover:cursor-pointer" onClick={handleSaveRecipe} disabled={isFormEmpty}>Save Recipe</Button>
             </div>
         </div>
     )
