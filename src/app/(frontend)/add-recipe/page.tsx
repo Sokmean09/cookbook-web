@@ -30,11 +30,11 @@ import { createGallery } from "@/app/_action/gallery-action"
 export default function AddRecipePage() {
 
     const [recipeId, setrecipeId] = useState<number | null>(null);
-	const [recipeName, setRecipeName] = useState("");
-	const [description, setDescription] = useState("");
-	const [image, setImage] = useState("");
-	const [imageFile, setImageFile] = useState<File | null>(null);
-	const [theme, setTheme] = useState("");
+    const [recipeName, setRecipeName] = useState("");
+    const [description, setDescription] = useState("");
+    const [image, setImage] = useState("");
+    const [imageFile, setImageFile] = useState<File | null>(null);
+    const [theme, setTheme] = useState("");
 
 
     const [prepTime, setPrepTime] = useState<number | null>(null);
@@ -47,16 +47,17 @@ export default function AddRecipePage() {
 
 
     const [gallery, setGallery] = useState([""]);
-	const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
+    const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
 
 
 
     const handleSaveRecipe = async () => {
-        await handleAddRecipe();
-        await handleAddRecipeInfo();
-        await handleAddIngredient();
-        await handleAddInstructions();
-        await handleAddGallery();
+        const id = await handleAddRecipe();
+        if (!id) return;
+        await handleAddRecipeInfo(id);
+        await handleAddIngredient(id);
+        await handleAddInstructions(id);
+        await handleAddGallery(id);
         console.log("Added new recipe");
     }
 
@@ -64,7 +65,7 @@ export default function AddRecipePage() {
         if (!recipeName.trim()) return;
 
         let imagePath = image;
-        
+
         if (imageFile) {
             const formData = new FormData();
             formData.append('file', imageFile);
@@ -76,7 +77,7 @@ export default function AddRecipePage() {
         }
 
         const recipe: Recipes = {
-            id: 0, 
+            id: 0,
             name: recipeName,
             slug: slugify(recipeName),
             description: description!,
@@ -86,13 +87,14 @@ export default function AddRecipePage() {
         };
         const result = await createRecipe(recipe);
         setrecipeId(result.id);
+        return result.id;
     }
 
-    const handleAddRecipeInfo = async () => {
+    const handleAddRecipeInfo = async (recipeId: number) => {
         if (!recipeId) return;
 
         const recipeInfo: RecipeInfo = {
-            id: 0, 
+            id: 0,
             recipeId: recipeId,
             prepTime: prepTime,
             cookTime: cookTime!,
@@ -102,23 +104,11 @@ export default function AddRecipePage() {
         await createRecipeInfo(recipeInfo);
     }
 
-    const handleAddIngredient = async () => {
+    const handleAddIngredient = async (recipeId: number) => {
         if (!recipeId) return;
 
-        // Option 1: Sequentially
-        for (const element of ingredients) {
-            const ingredient: Ingredients = {
-                id: 0,
-                recipeId: recipeId,
-                name: element.name,
-                quantity: element.quantity,
-                createdAt: new Date(),
-            };
-            await createIngredient(ingredient);
-        }
-
-        // Option 2: Parallel
-        // await Promise.all(ingredients.map(element => {
+        // Sequentially
+        // for (const element of ingredients) {
         //     const ingredient: Ingredients = {
         //         id: 0,
         //         recipeId: recipeId,
@@ -126,27 +116,27 @@ export default function AddRecipePage() {
         //         quantity: element.quantity,
         //         createdAt: new Date(),
         //     };
-        //     return createIngredient(ingredient);
-        // }));
+        //     await createIngredient(ingredient);
+        // }
+
+        // Parallel
+        await Promise.all(ingredients.map(element => {
+            const ingredient: Ingredients = {
+                id: 0,
+                recipeId: recipeId,
+                name: element.name,
+                quantity: element.quantity,
+                createdAt: new Date(),
+            };
+            return createIngredient(ingredient);
+        }));
     }
 
-    const handleAddInstructions = async () => {
+    const handleAddInstructions = async (recipeId: number) => {
         if (!recipeId) return;
 
         // Sequentially
-        for (const element of instructions) {
-            const instruction: Instructions = {
-                id: 0,
-                recipeId: recipeId,
-                step: element.step,
-                content: element.content,
-                createdAt: new Date(),
-            };
-            await createInstruction(instruction);
-        }
-
-        // Or in parallel
-        // await Promise.all(instructions.map(element => {
+        // for (const element of instructions) {
         //     const instruction: Instructions = {
         //         id: 0,
         //         recipeId: recipeId,
@@ -154,48 +144,60 @@ export default function AddRecipePage() {
         //         content: element.content,
         //         createdAt: new Date(),
         //     };
-        //     return createInstruction(instruction);
-        // }));
-}
-
-    const handleAddGallery = async () => {
-        if (!recipeId) return;
-
-        for (const element of galleryFiles) {
-            const formData = new FormData();
-            formData.append("file", element);
-
-            // Wait for upload to complete
-            const data = await uploadFile(formData);
-
-            // Use the uploaded file path
-            const gallery: Gallery = {
-            id: 0,
-            recipeId: recipeId!,
-            image: data.filePath,
-            createdAt: new Date(),
-            };
-
-            await createGallery(gallery);
-        }
-        
-        // const formData = new FormData()
-        // galleryFiles.forEach((file) => {
-        //     formData.append("files", file)
-        // })
-
-        // const res = await fetch("/api/upload", {
-        //     method: "POST",
-        //     body: formData,
-        // })
-        // if (!res.ok) {
-        //     console.error("Upload failed")
-        // return
+        //     await createInstruction(instruction);
         // }
-        
 
-        // const data = await res.json()
-        // console.log("Uploaded:", data)
+        // Parallel
+        await Promise.all(instructions.map(element => {
+            const instruction: Instructions = {
+                id: 0,
+                recipeId: recipeId,
+                step: element.step,
+                content: element.content,
+                createdAt: new Date(),
+            };
+            return createInstruction(instruction);
+        }));
+    }
+
+    const handleAddGallery = async (recipeId: number) => {
+        if (!recipeId) return;
+        
+        // Sequentially
+        // for (const element of galleryFiles) {
+        //     const formData = new FormData();
+        //     formData.append("file", element);
+        //     const data = await uploadFile(formData);
+        //     const gallery: Gallery = {
+        //         id: 0,
+        //         recipeId: recipeId,
+        //         image: data.filePath,
+        //         createdAt: new Date(),
+        //     };
+        //     await createGallery(gallery);
+        // }
+
+        // Parallel
+        await Promise.all(
+            galleryFiles.map(async (file) => {
+                const formData = new FormData();
+                formData.append("file", file);
+
+                const data = await uploadFile(formData);
+
+                const galleryItem: Gallery = {
+                    id: 0,
+                    recipeId: recipeId,
+                    image: data.filePath,
+                    createdAt: new Date(),
+                };
+
+                await createGallery(galleryItem);
+            })
+        );
+
+        setGalleryFiles([]);
+        setGallery([]);
     }
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -211,11 +213,11 @@ export default function AddRecipePage() {
 
     const removeImage = (index: number) => {
         setGallery((prev) => {
-        const toRemove = prev[index]
-        if (toRemove) {
-            URL.revokeObjectURL(toRemove) //free memory
-        }
-        return prev.filter((_, i) => i !== index)
+            const toRemove = prev[index]
+            if (toRemove) {
+                URL.revokeObjectURL(toRemove) //free memory
+            }
+            return prev.filter((_, i) => i !== index)
         })
     }
 
@@ -259,7 +261,7 @@ export default function AddRecipePage() {
                                     let val = Number(e.target.value)
                                     setPrepTime(val)
                                 }} />
-                            <Input type="number" placeholder="Cook Time (minutes)" value={cookTime ?? ""} min={0} 
+                            <Input type="number" placeholder="Cook Time (minutes)" value={cookTime ?? ""} min={0}
                                 onChange={(e) => {
                                     let val = Number(e.target.value)
                                     setCookTime(val)
