@@ -15,17 +15,17 @@ export default function GalleryStudio() {
     const [gallery, setGallery] = useState<Gallery[]>([]);
 
     useEffect(() => {
-            const fetchRecipes = async () => {
-                try {
-                    const data = await getGallery();
-                    setGallery(data);
-                } catch (error) {
-                    console.error("Failed to fetch gallery:", error);
-                }
-            };
-    
-            fetchRecipes();
-        }, []);
+        const fetchRecipes = async () => {
+            try {
+                const data = await getGallery();
+                setGallery(data);
+            } catch (error) {
+                console.error("Failed to fetch gallery:", error);
+            }
+        };
+
+        fetchRecipes();
+    }, []);
 
 	const [id, setId] = useState<number | null>(null);
 	const [image, setImage] = useState("");

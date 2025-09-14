@@ -4,10 +4,12 @@ import { decrypt } from "./lib/session";
 
 const protectedRoutes = [
   "/",
+  "/recipe",
   "/recipes",
   "/about",
-  "/admin",
+  "/add-recipe",
   "/settings",
+  "/admin",
 ];
 const publicRoutes = [
   "/login",

@@ -65,7 +65,6 @@ export default function RecipesStudio() {
 			imagePath = data.filePath;
 			setImage(imagePath);
 			console.log(data.filePath);
-			
 		}
 
 		const recipe: Recipes = {
