@@ -23,7 +23,7 @@ export async function createRecipe(recipe: Recipes) {
 	return await prisma.recipes.create({
 		data: {
 			name: recipe.name,
-			slug: slugify(recipe.name),
+			slug: recipe.slug?.trim() || slugify(recipe.name),
 			description: recipe.description,
 			image: recipe.image,
 			theme: recipe.theme,
@@ -36,7 +36,7 @@ export async function updateRecipe(id: number, recipe: Recipes) {
 		where: { id: id },
 		data: {
 			name: recipe.name,
-			slug: slugify(recipe.name),
+			slug: recipe.slug?.trim() || slugify(recipe.name),
 			description: recipe.description,
 			image: recipe.image,
 			theme: recipe.theme,

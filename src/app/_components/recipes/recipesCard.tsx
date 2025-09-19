@@ -42,28 +42,28 @@ export default function RecipesCardList() {
 					))
 					: displayedRecipes.map((recipe) => (
 						<Link key={recipe.id} href={`/recipe/${recipe.slug}`}>
-						<Card className="overflow-hidden cursor-pointer hover:shadow-lg transition-transform duration-100 hover:scale-101">
-							<div className="relative sm:h-48 md:h-58 lg:h-72 h-80 transition-all w-full">
-							<Image
-								src={
-								recipe.image && recipe.image.trim() !== ""
-									? recipe.image
-									: "/no-image.jpg"
-								}
-								alt={recipe.name || "Recipe image"}
-								fill
-								sizes="(max-width: 640px) 100vw,
-									(max-width: 768px) 50vw,
-									(max-width: 1024px) 33vw,
-									25vw"
-								className="object-cover"
-								priority
-							/>
-							</div>
-							<CardContent className="p-2 text-center">
-							<h3 className="text-lg font-semibold">{recipe.name}</h3>
-							</CardContent>
-						</Card>
+							<Card className="overflow-hidden cursor-pointer hover:shadow-lg transition-transform duration-100 hover:scale-101">
+								<div className="relative sm:h-48 md:h-58 lg:h-72 h-80 transition-all w-full">
+								<Image
+									src={
+									recipe.image && recipe.image.trim() !== ""
+										? recipe.image
+										: "/no-image.jpg"
+									}
+									alt={recipe.name || "Recipe image"}
+									fill
+									sizes="(max-width: 640px) 100vw,
+										(max-width: 768px) 50vw,
+										(max-width: 1024px) 33vw,
+										25vw"
+									className="object-cover"
+									priority
+								/>
+								</div>
+								<CardContent className="p-2 text-center">
+								<h3 className="text-lg font-semibold">{recipe.name}</h3>
+								</CardContent>
+							</Card>
 						</Link>
 					))}
 				</div>

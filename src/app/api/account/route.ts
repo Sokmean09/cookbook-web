@@ -12,7 +12,7 @@ export async function POST(req: Request) {
         }
 
         const body = await req.json();
-        const { id, name, email, password } = body;
+        const { id, name, email, role, password } = body;
 
         if (!email || !password) {
             return NextResponse.json(
@@ -26,6 +26,7 @@ export async function POST(req: Request) {
         const newUser = await updateUser(id, {
             name: name ?? "",
             email,
+            role,
             password: hashedPassword,
         } as Users);
 

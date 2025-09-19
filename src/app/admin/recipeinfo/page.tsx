@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Gallery, Recipes } from "../../../../generated/prisma";
+import { RecipeInfo, Recipes } from "../../../../generated/prisma";
 import {
-	createGallery,
-	deleteGallery,
-	getGallery,
-	updateGallery,
-} from "@/app/_action/gallery-action";
-import { uploadFile } from "@/utils/uploadFile";
+	createRecipeInfo,
+	deleteRecipeInfo,
+	getRecipeInfo,
+	updateRecipeInfo,
+} from "@/app/_action/recipeInfo-action";
+import { getRecipes } from "@/app/_action/recipes-action";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,15 +34,15 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { getRecipes } from "@/app/_action/recipes-action";
 
-export default function GalleryStudio() {
-	const [gallery, setGallery] = useState<Gallery[]>([]);
+export default function RecipeInfoStudio() {
+	const [recipeInfos, setRecipeInfos] = useState<RecipeInfo[]>([]);
 	const [recipes, setRecipes] = useState<Recipes[]>([]);
-	const [selectedGallery, setSelectedGallery] = useState<Gallery | null>(
-		null
-	);
-	const [imageFile, setImageFile] = useState<File | null>(null);
+	const [selectedInfo, setSelectedInfo] = useState<RecipeInfo | null>(null);
+
+	const [prepTime, setPrepTime] = useState<number | null>(null);
+	const [cookTime, setCookTime] = useState<number | null>(null);
+	const [servings, setServings] = useState<number | null>(null);
 	const [recipeId, setRecipeId] = useState<number | null>(null);
 
 	const [search, setSearch] = useState("");
@@ -57,20 +57,22 @@ export default function GalleryStudio() {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const galleryData = await getGallery();
+				const infoData = await getRecipeInfo();
 				const recipesData = await getRecipes();
-				setGallery(galleryData);
+				setRecipeInfos(infoData);
 				setRecipes(recipesData);
 			} catch (error) {
-				console.error("Failed to fetch gallery:", error);
+				console.error("Failed to fetch recipe info:", error);
 			}
 		};
 		fetchData();
 	}, []);
 
 	const resetForm = () => {
-		setSelectedGallery(null);
-		setImageFile(null);
+		setSelectedInfo(null);
+		setPrepTime(null);
+		setCookTime(null);
+		setServings(null);
 		setRecipeId(null);
 	};
 
@@ -79,69 +81,68 @@ export default function GalleryStudio() {
 		setOpenAdd(true);
 	};
 
-	const handleAddGallery = async () => {
-		if (!imageFile || recipeId === null) return;
+	const handleAddInfo = async () => {
+		if (recipeId === null) return;
 
-		const formData = new FormData();
-		formData.append("file", imageFile);
-		const data = await uploadFile(formData);
-
-		await createGallery({
+		await createRecipeInfo({
 			id: 0,
-			image: data.filePath,
+			prepTime: prepTime ?? 0,
+			cookTime: cookTime ?? 0,
+			servings: servings ?? 0,
 			recipeId,
 			createdAt: new Date(),
 		});
-		setGallery(await getGallery());
+
+		setRecipeInfos(await getRecipeInfo());
 		setOpenAdd(false);
 	};
 
-	const handleEditOpen = (item: Gallery) => {
-		setSelectedGallery(item);
+	const handleEditOpen = (item: RecipeInfo) => {
+		setSelectedInfo(item);
+		setPrepTime(item.prepTime ?? null);
+		setCookTime(item.cookTime ?? null);
+		setServings(item.servings ?? null);
 		setRecipeId(item.recipeId);
 		setOpenEdit(true);
 	};
 
-	const handleEditGallery = async () => {
-		if (!selectedGallery || recipeId === null) return;
+	const handleEditInfo = async () => {
+		if (!selectedInfo || recipeId === null) return;
 
-		let imagePath = selectedGallery.image;
-		if (imageFile) {
-			const formData = new FormData();
-			formData.append("file", imageFile);
-			const data = await uploadFile(formData);
-			imagePath = data.filePath;
-		}
-
-		await updateGallery(selectedGallery.id, {
-			id: selectedGallery.id,
-			image: imagePath,
+		await updateRecipeInfo(selectedInfo.id, {
+			id: selectedInfo.id,
+			prepTime: prepTime ?? 0,
+			cookTime: cookTime ?? 0,
+			servings: servings ?? 0,
 			recipeId,
 			createdAt: new Date(),
 		});
-		setGallery(await getGallery());
+
+		setRecipeInfos(await getRecipeInfo());
 		setOpenEdit(false);
 	};
 
-	const handleDeleteOpen = (item: Gallery) => {
-		setSelectedGallery(item);
+	const handleDeleteOpen = (item: RecipeInfo) => {
+		setSelectedInfo(item);
 		setOpenConfirm(true);
 	};
 
-	const handleDeleteGallery = async () => {
-		if (selectedGallery) {
-			await deleteGallery(selectedGallery.id);
-			setGallery(await getGallery());
+	const handleDeleteInfo = async () => {
+		if (selectedInfo) {
+			await deleteRecipeInfo(selectedInfo.id);
+			setRecipeInfos(await getRecipeInfo());
 		}
 		setOpenConfirm(false);
 	};
 
-	const filteredGallery = gallery.filter((g) => {
-		const recipeName = recipes.find((r) => r.id === g.recipeId)?.name ?? "";
+	const filteredInfos = recipeInfos.filter((info) => {
+		const recipeName =
+			recipes.find((r) => r.id === info.recipeId)?.name ?? "";
 		return recipeName.toLowerCase().includes(search.toLowerCase());
 	});
-	const totalPages = Math.ceil(filteredGallery.length / itemsPerPage);
-	const paginatedGallery = filteredGallery.slice(
+
+	const totalPages = Math.ceil(filteredInfos.length / itemsPerPage);
+	const paginatedInfos = filteredInfos.slice(
 		(currentPage - 1) * itemsPerPage,
 		currentPage * itemsPerPage
 	);
@@ -151,7 +152,7 @@ export default function GalleryStudio() {
 			<Card className="shadow-xl rounded-2xl">
 				<CardHeader className="flex flex-col md:flex-row md:justify-between items-start md:items-center">
 					<CardTitle className="text-2xl mb-2 md:mb-0">
-						Gallery
+						Recipe Info
 					</CardTitle>
 					<div className="flex gap-2 flex-col md:flex-row items-start md:items-center">
 						<Input
@@ -169,12 +170,14 @@ export default function GalleryStudio() {
 									className="bg-green-700 hover:bg-green-800"
 									onClick={handleAddOpen}
 								>
-									Add Gallery
+									Add Info
 								</Button>
 							</DialogTrigger>
 							<DialogContent>
 								<DialogHeader>
-									<DialogTitle>Add New Gallery</DialogTitle>
+									<DialogTitle>
+										Add New Recipe Info
+									</DialogTitle>
 								</DialogHeader>
 								<div className="space-y-4">
 									<label>Recipe</label>
@@ -198,19 +201,33 @@ export default function GalleryStudio() {
 											))}
 										</SelectContent>
 									</Select>
-									<label>Image</label>
+									<label>Prep Time (mins)</label>
 									<Input
-										type="file"
-										accept="image/*"
+										type="number"
+										value={prepTime ?? ""}
 										onChange={(e) =>
-											setImageFile(
-												e.target.files?.[0] ?? null
-											)
+											setPrepTime(Number(e.target.value))
+										}
+									/>
+									<label>Cook Time (mins)</label>
+									<Input
+										type="number"
+										value={cookTime ?? ""}
+										onChange={(e) =>
+											setCookTime(Number(e.target.value))
+										}
+									/>
+									<label>Servings</label>
+									<Input
+										type="number"
+										value={servings ?? ""}
+										onChange={(e) =>
+											setServings(Number(e.target.value))
 										}
 									/>
 									<Button
-										onClick={handleAddGallery}
-										disabled={!imageFile || !recipeId}
+										onClick={handleAddInfo}
+										disabled={!recipeId}
 									>
 										Save
 									</Button>
@@ -225,34 +242,38 @@ export default function GalleryStudio() {
 						<TableHeader>
 							<TableRow>
 								<TableHead>ID</TableHead>
-								<TableHead>Image</TableHead>
 								<TableHead>Recipe</TableHead>
+								<TableHead>Prep Time</TableHead>
+								<TableHead>Cook Time</TableHead>
+								<TableHead>Servings</TableHead>
 								<TableHead className="text-right w-40">
 									Actions
 								</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
-							{paginatedGallery.map((item) => (
-								<TableRow key={item.id} className="h-20">
+							{paginatedInfos.map((item) => (
+								<TableRow key={item.id}>
 									<TableCell>{item.id}</TableCell>
-									<TableCell>
-										<img
-											src={item.image}
-											alt={`Gallery ${item.id}`}
-											className="w-15 h-15 object-cover rounded-md"
-										/>
-									</TableCell>
 									<TableCell>
 										{recipes.find(
 											(r) => r.id === item.recipeId
 										)?.name ?? "N/A"}
 									</TableCell>
+									<TableCell>
+										{item.prepTime ?? "-"}
+									</TableCell>
+									<TableCell>
+										{item.cookTime ?? "-"}
+									</TableCell>
+									<TableCell>
+										{item.servings ?? "-"}
+									</TableCell>
 									<TableCell className="text-right space-x-2">
 										<Dialog
 											open={
 												openEdit &&
-												selectedGallery?.id === item.id
+												selectedInfo?.id === item.id
 											}
 											onOpenChange={setOpenEdit}
 										>
@@ -269,7 +290,7 @@ export default function GalleryStudio() {
 											<DialogContent>
 												<DialogHeader>
 													<DialogTitle>
-														Edit Gallery
+														Edit Recipe Info
 													</DialogTitle>
 												</DialogHeader>
 												<div className="space-y-4">
@@ -303,22 +324,51 @@ export default function GalleryStudio() {
 															)}
 														</SelectContent>
 													</Select>
-													<label>Image</label>
+													<label>
+														Prep Time (mins)
+													</label>
 													<Input
-														type="file"
-														accept="image/*"
+														type="number"
+														value={prepTime ?? ""}
 														onChange={(e) =>
-															setImageFile(
-																e.target
-																	.files?.[0] ??
-																	null
+															setPrepTime(
+																Number(
+																	e.target
+																		.value
+																)
+															)
+														}
+													/>
+													<label>
+														Cook Time (mins)
+													</label>
+													<Input
+														type="number"
+														value={cookTime ?? ""}
+														onChange={(e) =>
+															setCookTime(
+																Number(
+																	e.target
+																		.value
+																)
+															)
+														}
+													/>
+													<label>Servings</label>
+													<Input
+														type="number"
+														value={servings ?? ""}
+														onChange={(e) =>
+															setServings(
+																Number(
+																	e.target
+																		.value
+																)
 															)
 														}
 													/>
 													<Button
-														onClick={
-															handleEditGallery
-														}
+														onClick={handleEditInfo}
 													>
 														Update
 													</Button>
@@ -329,7 +379,7 @@ export default function GalleryStudio() {
 										<Dialog
 											open={
 												openConfirm &&
-												selectedGallery?.id === item.id
+												selectedInfo?.id === item.id
 											}
 											onOpenChange={setOpenConfirm}
 										>
@@ -347,14 +397,14 @@ export default function GalleryStudio() {
 												<DialogHeader>
 													<DialogTitle>
 														Are you sure you want to
-														delete this gallery?
+														delete this info?
 													</DialogTitle>
 												</DialogHeader>
 												<div className="space-y-4 text-center space-x-10">
 													<Button
 														className="w-full bg-red-700 hover:bg-red-800 text-white"
 														onClick={
-															handleDeleteGallery
+															handleDeleteInfo
 														}
 													>
 														Yes

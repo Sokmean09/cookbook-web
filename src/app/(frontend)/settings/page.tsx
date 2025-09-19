@@ -16,6 +16,7 @@ export default function SettingPage() {
     const [formData, setFormData] = useState({
       name: "",
       email: "",
+      role: "",
       password: "",
       confirmPassword: "",
     });
@@ -30,6 +31,7 @@ export default function SettingPage() {
       ...prev,
       name: currentUser.name || "",
       email: currentUser.email || "",
+      role: currentUser.role,
     }))
   }
 }, [currentUser])
@@ -60,6 +62,7 @@ export default function SettingPage() {
             id: currentUser?.id,
             name: formData.name,
             email: formData.email,
+            role: formData.role,
             password: formData.password,
           }),
         })

@@ -1,281 +1,422 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Recipes } from "../../../../generated/prisma";
-import { createRecipe, deleteRecipe, getRecipes, updateRecipe } from "@/app/_action/recipes-action";
-import { Textarea } from "@/components/ui/textarea";
+import {
+	createRecipe,
+	deleteRecipe,
+	getRecipes,
+	updateRecipe,
+} from "@/app/_action/recipes-action";
 import { uploadFile } from "@/utils/uploadFile";
-import { slugify } from "@/utils/slugify";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@/components/ui/table";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 
-export default function RecipesStudio() {
-
+export default function RecipeStudio() {
 	const [recipes, setRecipes] = useState<Recipes[]>([]);
+	const [selectedRecipe, setSelectedRecipe] = useState<Recipes | null>(null);
+
+	const [name, setName] = useState("");
+	const [slug, setSlug] = useState("");
+	const [description, setDescription] = useState("");
+	const [theme, setTheme] = useState("");
+	const [imageFile, setImageFile] = useState<File | null>(null);
+
+	const [search, setSearch] = useState("");
+
+	const [openAdd, setOpenAdd] = useState(false);
+	const [openEdit, setOpenEdit] = useState(false);
+	const [openConfirm, setOpenConfirm] = useState(false);
+
+	const [currentPage, setCurrentPage] = useState(1);
+	const [itemsPerPage, setItemsPerPage] = useState(10);
 
 	useEffect(() => {
-		const fetchRecipes = async () => {
+		const fetchData = async () => {
 			try {
-				const data = await getRecipes();
-				setRecipes(data);
+				const recipeData = await getRecipes();
+				setRecipes(recipeData);
 			} catch (error) {
 				console.error("Failed to fetch recipes:", error);
 			}
 		};
-
-		fetchRecipes();
+		fetchData();
 	}, []);
 
-	const [id, setId] = useState<number | null>(null);
-	const [name, setName] = useState("");
-	const [description, setDescription] = useState("");
-	const [image, setImage] = useState("");
-	const [imageFile, setImageFile] = useState<File | null>(null);
-	const [theme, setTheme] = useState("");
-
-	const [openAdd, setOpenAdd] = useState(false);
-	const [openEdit, setOpenEdit] = useState(false);
-
-	const [openConfirm, setOpenConfirm] = useState(false);
-
+	const resetForm = () => {
+		setSelectedRecipe(null);
+		setName("");
+		setSlug("");
+		setDescription("");
+		setTheme("");
+		setImageFile(null);
+	};
 
 	const handleAddOpen = () => {
-		setName("");
-		setDescription("");
-		// setImage("");
-		setImageFile(null);
-		setTheme("");
-
+		resetForm();
 		setOpenAdd(true);
 	};
 
 	const handleAddRecipe = async () => {
-		if (!name.trim()) return;
+		if (!name) return;
 
-		let imagePath = image;
-
+		let imagePath = "";
 		if (imageFile) {
 			const formData = new FormData();
-			formData.append('file', imageFile);
-
+			formData.append("file", imageFile);
 			const data = await uploadFile(formData);
 			imagePath = data.filePath;
-			setImage(imagePath);
-			console.log(data.filePath);
 		}
 
-		const recipe: Recipes = {
-			id: 0, 
-			name: name,
-			slug: slugify(name),
-			description: description!,
+		await createRecipe({
+			id: 0,
+			name,
+			slug,
+			description,
 			image: imagePath,
-			theme: theme,
+			theme,
 			createdAt: new Date(),
-		};
-		await createRecipe(recipe);
+		});
 
-		const data = await getRecipes();
-		setRecipes(data);
-
+		setRecipes(await getRecipes());
 		setOpenAdd(false);
 	};
 
-	const handleEditOpen = (recipe: Recipes) => {
-		setId(recipe.id);
-		setName(recipe.name);
-		setDescription(recipe.description ?? "");
-		// setImage(recipe.image ?? "");
+	const handleEditOpen = (item: Recipes) => {
+		setSelectedRecipe(item);
+		setName(item.name);
+		setSlug(item.slug);
+		setDescription(item.description ?? "");
+		setTheme(item.theme ?? "");
 		setImageFile(null);
-		setTheme(recipe.theme ?? "");
-
 		setOpenEdit(true);
 	};
 
 	const handleEditRecipe = async () => {
-		if (id === null) return;
+		if (!selectedRecipe) return;
 
-		let imagePath = image;
-
+		let imagePath = selectedRecipe.image ?? "";
 		if (imageFile) {
 			const formData = new FormData();
-			formData.append('file', imageFile);
-
+			formData.append("file", imageFile);
 			const data = await uploadFile(formData);
 			imagePath = data.filePath;
-			setImage(imagePath);
-			console.log(data.filePath);
-			
 		}
-		const recipe: Recipes = {
-			id: 0, 
-			name: name,
-			slug: slugify(name),
-			description: description!,
+
+		await updateRecipe(selectedRecipe.id, {
+			id: selectedRecipe.id,
+			name,
+			slug,
+			description,
 			image: imagePath,
-			theme: theme,
+			theme,
 			createdAt: new Date(),
-		};
-		await updateRecipe(id, recipe);
+		});
 
-		const data = await getRecipes();
-		setRecipes(data);
-
+		setRecipes(await getRecipes());
 		setOpenEdit(false);
 	};
 
-	const handleDeleteOpen = () => {
+	const handleDeleteOpen = (item: Recipes) => {
+		setSelectedRecipe(item);
 		setOpenConfirm(true);
-	}
+	};
 
-	const handleDeleteRecipe = async (id?: number) => {
-		if (id) {
-			deleteRecipe(id);
-
-			const data = await getRecipes();
-			setRecipes(data);
+	const handleDeleteRecipe = async () => {
+		if (selectedRecipe) {
+			await deleteRecipe(selectedRecipe.id);
+			setRecipes(await getRecipes());
 		}
-
 		setOpenConfirm(false);
 	};
+
+	const filteredRecipes = recipes.filter((r) =>
+		r.name.toLowerCase().includes(search.toLowerCase())
+	);
+
+	const totalPages = Math.ceil(filteredRecipes.length / itemsPerPage);
+	const paginatedRecipes = filteredRecipes.slice(
+		(currentPage - 1) * itemsPerPage,
+		currentPage * itemsPerPage
+	);
 
 	return (
 		<div className="px-7">
 			<Card className="shadow-xl rounded-2xl">
-				<CardHeader>
-					<CardTitle className="text-2xl">Recipes</CardTitle>
-				</CardHeader>
-				<CardContent>
-					<div className="flex justify-between mb-4">
+				<CardHeader className="flex flex-col md:flex-row md:justify-between items-start md:items-center">
+					<CardTitle className="text-2xl mb-2 md:mb-0">
+						Recipes
+					</CardTitle>
+					<div className="flex gap-2 flex-col md:flex-row items-start md:items-center">
+						<Input
+							placeholder="Search recipes..."
+							value={search}
+							onChange={(e) => {
+								setSearch(e.target.value);
+								setCurrentPage(1);
+							}}
+							className="w-full md:w-auto"
+						/>
 						<Dialog open={openAdd} onOpenChange={setOpenAdd}>
 							<DialogTrigger asChild>
-								<Button className="bg-green-700 hover:bg-green-800" onClick={handleAddOpen}>Add Recipe</Button>
+								<Button
+									className="bg-green-700 hover:bg-green-800"
+									onClick={handleAddOpen}
+								>
+									Add Recipe
+								</Button>
 							</DialogTrigger>
-							<DialogContent aria-describedby="">
+							<DialogContent>
 								<DialogHeader>
 									<DialogTitle>Add New Recipe</DialogTitle>
 								</DialogHeader>
 								<div className="space-y-4">
 									<label>Name</label>
 									<Input
-										placeholder="Recipe name"
+                    placeholder="Recipe name"
 										value={name}
-										onChange={(e) => setName(e.target.value)}
+										onChange={(e) =>
+											setName(e.target.value)
+										}
+									/>
+									<label>Slug</label>
+									<Input
+                    placeholder="Leave empty to be auto-generated"
+										value={slug}
+										onChange={(e) => {
+                      const val = e.target.value
+                        .toLowerCase()
+                        .replace(/[^a-z0-9-]/g, "");
+                      setSlug(val);
+                    }}
 									/>
 									<label>Description</label>
 									<Textarea
-										placeholder="Description"
+                    placeholder="Description"
 										value={description}
-										onChange={(e) => setDescription(e.target.value)}
+										onChange={(e) =>
+											setDescription(e.target.value)
+										}
 									/>
-									{/* <label>Image URL</label>
+									<label>Theme</label>
 									<Input
-										placeholder="Image URL"
-										value={image}
-										onChange={(e) => setImage(e.target.value)}
-									/> */}
+                    placeholder="Theme"
+										value={theme}
+										onChange={(e) =>
+											setTheme(e.target.value)
+										}
+									/>
 									<label>Image</label>
 									<Input
 										type="file"
 										accept="image/*"
-										onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
+										onChange={(e) =>
+											setImageFile(
+												e.target.files?.[0] ?? null
+											)
+										}
 									/>
-									<label>Theme</label>
-									<Input
-										placeholder="Theme"
-										value={theme}
-										onChange={(e) => setTheme(e.target.value)}
-									/>
-									<Button onClick={handleAddRecipe} disabled={!imageFile}>Save</Button>
+									<Button
+										onClick={handleAddRecipe}
+										disabled={!name.trim() || !name}
+									>
+										Save
+									</Button>
 								</div>
 							</DialogContent>
 						</Dialog>
 					</div>
+				</CardHeader>
 
+				<CardContent>
 					<Table>
 						<TableHeader>
 							<TableRow>
 								<TableHead>ID</TableHead>
 								<TableHead>Name</TableHead>
+								<TableHead>Slug</TableHead>
 								<TableHead>Description</TableHead>
-								<TableHead>Image</TableHead>
 								<TableHead>Theme</TableHead>
-								<TableHead className="text-right">Actions</TableHead>
+								<TableHead>Image</TableHead>
+								<TableHead className="text-right w-40">
+									Actions
+								</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
-							{recipes.map((recipe) => (
-								<TableRow key={recipe.id}>
-									<TableCell>{recipe.id}</TableCell>
-									<TableCell>{recipe.name}</TableCell>
-									<TableCell>{recipe.description}</TableCell>
-									<TableCell>{recipe.image}</TableCell>
-									<TableCell>{recipe.theme}</TableCell>
+							{paginatedRecipes.map((item) => (
+								<TableRow key={item.id}>
+									<TableCell>{item.id}</TableCell>
+									<TableCell>{item.name}</TableCell>
+									<TableCell>{item.slug}</TableCell>
+									<TableCell>
+										{item.description ?? "-"}
+									</TableCell>
+									<TableCell>{item.theme ?? "-"}</TableCell>
+									<TableCell>
+										{item.image ? (
+											<img
+												src={item.image}
+												alt={item.name}
+												className="w-16 h-16 object-cover rounded-md"
+											/>
+										) : (
+											"N/A"
+										)}
+									</TableCell>
 									<TableCell className="text-right space-x-2">
-										<Dialog open={openEdit} onOpenChange={setOpenEdit}>
+										<Dialog
+											open={
+												openEdit &&
+												selectedRecipe?.id === item.id
+											}
+											onOpenChange={setOpenEdit}
+										>
 											<DialogTrigger asChild>
-												<Button className="bg-blue-700 hover:bg-blue-800 text-white" onClick={() => handleEditOpen(recipe)}>
+												<Button
+													className="bg-blue-700 hover:bg-blue-800 text-white"
+													onClick={() =>
+														handleEditOpen(item)
+													}
+												>
 													Edit
 												</Button>
 											</DialogTrigger>
-											<DialogContent aria-describedby="">
+											<DialogContent>
 												<DialogHeader>
-													<DialogTitle>Edit Recipe</DialogTitle>
+													<DialogTitle>
+														Edit Recipe
+													</DialogTitle>
 												</DialogHeader>
 												<div className="space-y-4">
 													<label>Name</label>
 													<Input
-														placeholder="Recipe name"
 														value={name}
-														onChange={(e) => setName(e.target.value)}
+														onChange={(e) =>
+															setName(
+																e.target.value
+															)
+														}
+													/>
+													<label>Slug</label>
+													<Input
+														value={slug}
+														onChange={(e) => {
+                              const val = e.target.value
+                                .toLowerCase()
+                                .replace(/[^a-z0-9-]/g, "");
+                              setSlug(val);
+                            }}
 													/>
 													<label>Description</label>
 													<Textarea
-														placeholder="Description"
 														value={description}
-														onChange={(e) => setDescription(e.target.value)}
+														onChange={(e) =>
+															setDescription(
+																e.target.value
+															)
+														}
 													/>
-													{/* <label>Image URL</label>
+													<label>Theme</label>
 													<Input
-														placeholder="Image URL"
-														value={image}
-														onChange={(e) => setImage(e.target.value)}
-													/> */}
+														value={theme}
+														onChange={(e) =>
+															setTheme(
+																e.target.value
+															)
+														}
+													/>
 													<label>Image</label>
 													<Input
 														type="file"
 														accept="image/*"
-														onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
+														onChange={(e) =>
+															setImageFile(
+																e.target
+																	.files?.[0] ??
+																	null
+															)
+														}
 													/>
-													<label>Theme</label>
-													<Input
-														placeholder="Theme"
-														value={theme}
-														onChange={(e) => setTheme(e.target.value)}
-													/>
-													<Button onClick={handleEditRecipe} disabled={!imageFile}>Update</Button>
+													<Button
+														onClick={
+															handleEditRecipe
+														}
+													>
+														Update
+													</Button>
 												</div>
 											</DialogContent>
 										</Dialog>
-										<Dialog open={openConfirm} onOpenChange={setOpenConfirm}>
+
+										<Dialog
+											open={
+												openConfirm &&
+												selectedRecipe?.id === item.id
+											}
+											onOpenChange={setOpenConfirm}
+										>
 											<DialogTrigger asChild>
 												<Button
 													className="bg-red-700 hover:bg-red-800 text-white"
-													onClick={() => handleDeleteOpen()}
+													onClick={() =>
+														handleDeleteOpen(item)
+													}
 												>
 													Delete
 												</Button>
 											</DialogTrigger>
-											<DialogContent aria-describedby="">
+											<DialogContent>
 												<DialogHeader>
-													<DialogTitle>Are you sure you want to delete this recipe?</DialogTitle>
+													<DialogTitle>
+														Are you sure you want to
+														delete this recipe?
+													</DialogTitle>
 												</DialogHeader>
 												<div className="space-y-4 text-center space-x-10">
-													<Button className="w-full bg-red-700 hover:bg-red-800 text-white" onClick={() => handleDeleteRecipe(recipe.id)}>Yes</Button>
-													<Button className="mr-4 w-full" variant="outline" onClick={() => handleDeleteRecipe()}>Cancel</Button>
+													<Button
+														className="w-full bg-red-700 hover:bg-red-800 text-white"
+														onClick={
+															handleDeleteRecipe
+														}
+													>
+														Yes
+													</Button>
+													<Button
+														className="w-full"
+														variant="outline"
+														onClick={() =>
+															setOpenConfirm(
+																false
+															)
+														}
+													>
+														Cancel
+													</Button>
 												</div>
 											</DialogContent>
 										</Dialog>
@@ -284,6 +425,57 @@ export default function RecipesStudio() {
 							))}
 						</TableBody>
 					</Table>
+
+					{/* Pagination */}
+					<div className="flex justify-between items-center mt-4">
+						<div className="flex items-center gap-2">
+							<span>Items per page:</span>
+							<Select
+								value={itemsPerPage.toString()}
+								onValueChange={(val) => {
+									setItemsPerPage(Number(val));
+									setCurrentPage(1);
+								}}
+							>
+								<SelectTrigger>
+									<SelectValue />
+								</SelectTrigger>
+								<SelectContent>
+									{[5, 10, 20, 50].map((n) => (
+										<SelectItem
+											key={n}
+											value={n.toString()}
+										>
+											{n}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						</div>
+						<div className="flex items-center gap-2">
+							<Button
+								onClick={() =>
+									setCurrentPage((p) => Math.max(1, p - 1))
+								}
+								disabled={currentPage === 1}
+							>
+								Prev
+							</Button>
+							<span>
+								Page {currentPage} of {totalPages}
+							</span>
+							<Button
+								onClick={() =>
+									setCurrentPage((p) =>
+										Math.min(totalPages, p + 1)
+									)
+								}
+								disabled={currentPage === totalPages}
+							>
+								Next
+							</Button>
+						</div>
+					</div>
 				</CardContent>
 			</Card>
 		</div>

@@ -35,6 +35,7 @@ export async function updateUser(id: number, user: Users) {
         data: {
             name: user.name,
             email: user.email,
+            role: user.role,
             password: user.password,
         },
     });

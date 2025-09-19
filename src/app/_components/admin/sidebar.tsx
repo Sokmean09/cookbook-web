@@ -10,7 +10,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
-import { Home, Settings, ChefHat, Image } from "lucide-react"
+import { Home, Settings, ChefHat, Image, User, Info, NotebookText, ListTodo } from "lucide-react"
  
 // Menu items.
 const items = [
@@ -25,14 +25,34 @@ const items = [
     icon: Settings,
   },
   {
+    title: "Users",
+    url: "/admin/users",
+    icon: User,
+  },
+  {
     title: "Recipes",
     url: "/admin/recipes",
-    icon: ChefHat,
+    icon: NotebookText,
+  },
+  {
+    title: "RecipeInfo",
+    url: "/admin/recipeinfo",
+    icon: Info,
   },
   {
     title: "Gallery",
     url: "/admin/gallery",
     icon: Image,
+  },
+  {
+    title: "Ingredients",
+    url: "/admin/ingredients",
+    icon: ChefHat,
+  },
+  {
+    title: "Instructions",
+    url: "/admin/instructions",
+    icon: ListTodo,
   },
 ]
 
