@@ -8,7 +8,6 @@ import { getUsers } from "../_action/user-action";
 import { getRecipeInfo } from "../_action/recipeInfo-action";
 import { getIngredients } from "../_action/ingredient-action";
 import { getInstructions } from "../_action/instruction-action";
-import Link from "next/link";
 import DashboardCard from "../_components/admin/DashboardCard";
 
 export default function AdminDashboard() {
@@ -40,33 +39,6 @@ export default function AdminDashboard() {
 
 		fetchDb();
 	}, []);
-
-	// Helper function for rendering each card
-	const renderCard = (
-		title: string,
-		total: number,
-		path?: string,
-		label?: string
-	) => {
-		const content = (
-			<Card className="overflow-hidden cursor-pointer hover:shadow-lg transition-transform duration-100 hover:scale-101">
-				<CardHeader>
-					<CardTitle className="text-2xl text-center">{title}</CardTitle>
-				</CardHeader>
-				<CardContent>
-					<div>
-						<span className="text-muted-foreground">
-							{label ?? `Total ${title} found:`}
-						</span>{" "}
-						{total}
-					</div>
-				</CardContent>
-			</Card>
-		);
-
-		// Wrap with <Link> if path provided
-		return path ? <Link href={path}>{content}</Link> : content;
-	};
 
 	return (
 		<div className="px-7">
