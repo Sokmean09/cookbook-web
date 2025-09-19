@@ -1,6 +1,5 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useEffect, useState } from "react";
 import { getRecipes } from "../_action/recipes-action";
 import { getGallery } from "../_action/gallery-action";

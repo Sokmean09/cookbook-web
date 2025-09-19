@@ -1,5 +1,5 @@
 'use client'
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, useEffect } from 'react';
 import { useAuth } from './AuthProvider';
 import { Users } from '../../../generated/prisma';
 
@@ -13,16 +13,17 @@ export default function ProtectedRoute({
 }: ProtectedRouteProps) {
   const { currentUser } = useAuth();
 
-  if (currentUser === undefined) {
+
+
+  // Show loading while auth is initializing or redirecting
+  if (currentUser === undefined || currentUser === null) {
     return <div>Loading...</div>;
   }
 
-  if (
-    currentUser === null ||
-    (allowedRoles && !allowedRoles.includes(currentUser.role))
-  ) {
+  // Only render children if currentUser exists and has permission
+  if (allowedRoles && !allowedRoles.includes(currentUser.role)) {
     return <div>Permission denied</div>;
   }
 
-  return children;
+  return <>{children}</>;
 }
