@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -22,16 +21,13 @@ export default function PageDenied() {
   }, [countdown, router]);
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen text-center space-y-4">
-      <h1 className="text-3xl font-bold text-red-600">Permission Denied</h1>
-      <p className="text-gray-600">
+    <div className="flex flex-col items-center justify-center h-screen text-center space-y-4 bg-indigo-950">
+      <h1 className="text-4xl font-bold text-red-600">Permission Denied</h1>
+      <p className="text-muted-foreground">
         You do not have access to view this page.
         <br />
         Redirecting to home in <span className="font-semibold">{countdown}</span>...
       </p>
-      <Button onClick={() => router.push("/")}>
-        Go Back Home Now
-      </Button>
     </div>
   );
 }
