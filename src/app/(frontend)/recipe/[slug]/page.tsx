@@ -16,6 +16,7 @@ import { getInstructionByRecipeId } from "@/app/_action/instruction-action";
 import { getRecipeInfoByRecipeId } from "@/app/_action/recipeInfo-action";
 import { notFound } from "next/navigation";
 import RecipePageSkeleton from "@/app/_components/Skeleton/recipePageSkeleton";
+import NotFound from "@/app/not-found";
 
 export default function RecipePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = React.use(params);
@@ -25,18 +26,21 @@ export default function RecipePage({ params }: { params: Promise<{ slug: string 
   const [ingredient, setIngredient] = useState<Ingredients[]>([]);
   const [instruction, setInstruction] = useState<Instructions[]>([]);
   const [recipeInfo, setRecipeInfo] = useState<RecipeInfo | null>(null);
+
   const [loading, setLoading] = useState(true);
+  const [notFoundPage, setNotFoundPage] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       const data = await getRecipeBySlug(slug);
 
       if (!data) {
-        notFound();
+        setNotFoundPage(true);
+        setLoading(false);
         return;
       }
-      setRecipe(data);
 
+      setRecipe(data);
       if (data.id) {
         const galleryData = await getGalleryByRecipeId(data.id);
         if (galleryData) {
@@ -66,6 +70,10 @@ export default function RecipePage({ params }: { params: Promise<{ slug: string 
 
   if (loading) {
     return <RecipePageSkeleton />;
+  }
+
+  if (notFoundPage) {
+    return <NotFound />;
   }
 
   return (
