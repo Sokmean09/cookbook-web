@@ -39,8 +39,9 @@ export function AccountMenu() {
               Settings
           </DropdownMenuItem>
           <DropdownMenuItem 
-              className="hover:cursor-pointer hover:bg-gray-100"
-              onClick={() => handleLogout()}>
+              className="hover:cursor-pointer hover:bg-red-100!"
+              onClick={() => handleLogout()}
+              variant="destructive">
               <LogOut className="h-5 w-5 mx-1" />
               Logout
           </DropdownMenuItem>
