@@ -25,7 +25,7 @@ export async function POST(req: Request) {
   }
 
   // create session cookie
-  await createSession(user.id.toString());
+  await createSession(user.id.toString(), user.role);
 
   const authToken = Math.random().toString(36).substring(2);
 
