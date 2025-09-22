@@ -55,7 +55,11 @@ export default function Home() {
               >
                 <Card className="overflow-hidden hover:shadow-xl transition-shadow">
                   <Image
-                    src={recipe.image ?? "/no-image.jpg"}
+                    src={
+											recipe.image && recipe.image.trim() !== ""
+												? recipe.image
+												: "/no-image.jpg"
+										}
                     alt={recipe.name}
                     width={400}
                     height={300}
