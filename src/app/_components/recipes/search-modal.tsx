@@ -3,9 +3,9 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useEffect, useState } from "react";
-import { Recipes, Ingredients } from "../../../generated/prisma";
-import { getRecipes } from "../_action/recipes-action";
-import { getIngredients } from "../_action/ingredient-action";
+import { Recipes, Ingredients } from "../../../../generated/prisma";
+import { getRecipes } from "../../_action/recipes-action";
+import { getIngredients } from "../../_action/ingredient-action";
 import Link from "next/link";
 
 type SearchModalProps = {

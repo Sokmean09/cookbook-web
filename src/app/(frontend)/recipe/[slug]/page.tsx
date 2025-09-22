@@ -14,29 +14,35 @@ import React from "react";
 import { getIngredientByRecipeId } from "@/app/_action/ingredient-action";
 import { getInstructionByRecipeId } from "@/app/_action/instruction-action";
 import { getRecipeInfoByRecipeId } from "@/app/_action/recipeInfo-action";
+import { notFound } from "next/navigation";
+import RecipePageSkeleton from "@/app/_components/Skeleton/recipePageSkeleton";
 
 export default function RecipePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = React.use(params);
 
-  const [recipe, setRecipe] = useState<Recipes>();
+  const [recipe, setRecipe] = useState<Recipes | null>(null);
   const [gallery, setGallery] = useState<Gallery[]>([]);
   const [ingredient, setIngredient] = useState<Ingredients[]>([]);
   const [instruction, setInstruction] = useState<Instructions[]>([]);
-  const [recipeInfo, setRecipeInfo] = useState<RecipeInfo>();
+  const [recipeInfo, setRecipeInfo] = useState<RecipeInfo | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       const data = await getRecipeBySlug(slug);
-      if (data) {
-        setRecipe(data);
-      }
 
-      if (data?.id) {
+      if (!data) {
+        notFound();
+        return;
+      }
+      setRecipe(data);
+
+      if (data.id) {
         const galleryData = await getGalleryByRecipeId(data.id);
         if (galleryData) {
           setGallery(Array.isArray(galleryData) ? galleryData : [galleryData]);
         }
-        
+
         const ingredientData = await getIngredientByRecipeId(data.id);
         if (ingredientData) {
           setIngredient(Array.isArray(ingredientData) ? ingredientData : [ingredientData]);
@@ -51,22 +57,16 @@ export default function RecipePage({ params }: { params: Promise<{ slug: string 
         if (recipeInfoData) {
           setRecipeInfo(recipeInfoData);
         }
-
       }
+      setLoading(false);
     };
 
     fetchData();
   }, [slug]);
 
-    if (!recipe) {
-        return (
-        <div className="flex h-[60vh] items-center justify-center">
-            <Card className="p-6 text-center">
-            <h2 className="text-2xl font-semibold">Loading Recipe...</h2>
-            </Card>
-        </div>
-        );
-    }
+  if (loading) {
+    return <RecipePageSkeleton />;
+  }
 
   return (
     <div className="container mx-auto max-w-6xl py-12 px-12 bg-gray-200">
@@ -80,7 +80,7 @@ export default function RecipePage({ params }: { params: Promise<{ slug: string 
       {/* Hero Section */}
       <div className="mb-10">
         <div className="relative h-[350px] w-full overflow-hidden rounded-2xl shadow-md">
-          {recipe.image ? (
+          {recipe && recipe.image ? (
             <Image
               src={recipe.image}
               alt={recipe.name}
@@ -95,11 +95,11 @@ export default function RecipePage({ params }: { params: Promise<{ slug: string 
           )}
         </div>
 
-        <h1 className="mt-6 text-4xl font-bold">{recipe.name}</h1>
-        {recipe.theme && (
+        <h1 className="mt-6 text-4xl font-bold">{recipe?.name}</h1>
+        {recipe?.theme && (
           <Badge className="mt-2 text-base px-4 py-1">{recipe.theme}</Badge>
         )}
-        {recipe.description && (
+        {recipe?.description && (
           <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
             {recipe.description}
           </p>
@@ -133,12 +133,12 @@ export default function RecipePage({ params }: { params: Promise<{ slug: string 
             {[...instruction]
               .sort((a, b) => a.step - b.step)
               .map((step, idx) => (
-              <li
-                key={idx}
-                className="text-base leading-relaxed text-muted-foreground"
-              >
-                {step.content}
-              </li>
+                <li
+                  key={idx}
+                  className="text-base leading-relaxed text-muted-foreground"
+                >
+                  {step.content}
+                </li>
               ))}
           </ol>
         </div>

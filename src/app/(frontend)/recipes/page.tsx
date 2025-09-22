@@ -1,6 +1,6 @@
 "use client"
 import RecipesCardList from "@/app/_components/recipes/recipesCard";
-import { SearchModal } from "@/app/_components/search-modal";
+import { SearchModal } from "@/app/_components/recipes/search-modal";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 import React, { useState } from "react";
@@ -11,7 +11,7 @@ export default function Recipes() {
 		<div className="mx-10 my-10">
       <div className="flex">  
         <Button
-          className="bg-background hover:bg-gray-100 w-2xs justify-start"
+          className="bg-background hover:bg-gray-100 w-2xs justify-start hover:cursor-pointer"
           onClick={() => setOpenSearch(true)}
         >
           <Search className="text-black mr-2" />
