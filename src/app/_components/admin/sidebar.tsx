@@ -20,7 +20,7 @@ const items = [
     icon: Home,
   },
   {
-    title: "Admin",
+    title: "Dashboard",
     url: "/admin",
     icon: Settings,
   },

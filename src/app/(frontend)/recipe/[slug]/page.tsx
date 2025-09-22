@@ -130,14 +130,16 @@ export default function RecipePage({ params }: { params: Promise<{ slug: string 
         <div className="mb-10">
           <h2 className="mb-4 text-2xl font-semibold">Instructions</h2>
           <ol className="list-decimal pl-6 space-y-4">
-            {instruction.map((step, idx) => (
+            {[...instruction]
+              .sort((a, b) => a.step - b.step)
+              .map((step, idx) => (
               <li
                 key={idx}
                 className="text-base leading-relaxed text-muted-foreground"
               >
                 {step.content}
               </li>
-            ))}
+              ))}
           </ol>
         </div>
       )}
