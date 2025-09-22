@@ -168,7 +168,7 @@ export default function IngredientsStudio() {
 									Add Ingredient
 								</Button>
 							</DialogTrigger>
-							<DialogContent>
+							<DialogContent aria-describedby="">
 								<DialogHeader>
 									<DialogTitle>
 										Add New Ingredient
@@ -269,7 +269,7 @@ export default function IngredientsStudio() {
 													Edit
 												</Button>
 											</DialogTrigger>
-											<DialogContent>
+											<DialogContent aria-describedby="">
 												<DialogHeader>
 													<DialogTitle>
 														Edit Ingredient
@@ -357,7 +357,7 @@ export default function IngredientsStudio() {
 													Delete
 												</Button>
 											</DialogTrigger>
-											<DialogContent>
+											<DialogContent aria-describedby="">
 												<DialogHeader>
 													<DialogTitle>
 														Are you sure you want to

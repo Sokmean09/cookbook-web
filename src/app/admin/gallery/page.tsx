@@ -172,7 +172,7 @@ export default function GalleryStudio() {
 									Add Gallery
 								</Button>
 							</DialogTrigger>
-							<DialogContent>
+							<DialogContent  aria-describedby="">
 								<DialogHeader>
 									<DialogTitle>Add New Gallery</DialogTitle>
 								</DialogHeader>
@@ -266,7 +266,7 @@ export default function GalleryStudio() {
 													Edit
 												</Button>
 											</DialogTrigger>
-											<DialogContent>
+											<DialogContent aria-describedby="">
 												<DialogHeader>
 													<DialogTitle>
 														Edit Gallery
@@ -343,7 +343,7 @@ export default function GalleryStudio() {
 													Delete
 												</Button>
 											</DialogTrigger>
-											<DialogContent>
+											<DialogContent aria-describedby="">
 												<DialogHeader>
 													<DialogTitle>
 														Are you sure you want to

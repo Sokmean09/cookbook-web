@@ -190,14 +190,14 @@ export default function RecipeStudio() {
 									Add Recipe
 								</Button>
 							</DialogTrigger>
-							<DialogContent>
+							<DialogContent  aria-describedby="">
 								<DialogHeader>
 									<DialogTitle>Add New Recipe</DialogTitle>
 								</DialogHeader>
 								<div className="space-y-4">
 									<label>Name</label>
 									<Input
-                    placeholder="Recipe name"
+										placeholder="Recipe name"
 										value={name}
 										onChange={(e) =>
 											setName(e.target.value)
@@ -205,18 +205,19 @@ export default function RecipeStudio() {
 									/>
 									<label>Slug</label>
 									<Input
-                    placeholder="Leave empty to be auto-generated"
+										placeholder="Leave empty to be auto-generated"
 										value={slug}
 										onChange={(e) => {
-                      const val = e.target.value
-                        .toLowerCase()
-                        .replace(/[^a-z0-9-]/g, "");
-                      setSlug(val);
-                    }}
+											const val = e.target.value
+												.toLowerCase()
+												.replace(/[^a-z0-9-]/g, "");
+											setSlug(val);
+										}}
 									/>
 									<label>Description</label>
 									<Textarea
-                    placeholder="Description"
+										className="break-all"
+										placeholder="Description"
 										value={description}
 										onChange={(e) =>
 											setDescription(e.target.value)
@@ -224,7 +225,7 @@ export default function RecipeStudio() {
 									/>
 									<label>Theme</label>
 									<Input
-                    placeholder="Theme"
+										placeholder="Theme"
 										value={theme}
 										onChange={(e) =>
 											setTheme(e.target.value)
@@ -306,7 +307,7 @@ export default function RecipeStudio() {
 													Edit
 												</Button>
 											</DialogTrigger>
-											<DialogContent>
+											<DialogContent aria-describedby="">
 												<DialogHeader>
 													<DialogTitle>
 														Edit Recipe
@@ -326,14 +327,15 @@ export default function RecipeStudio() {
 													<Input
 														value={slug}
 														onChange={(e) => {
-                              const val = e.target.value
-                                .toLowerCase()
-                                .replace(/[^a-z0-9-]/g, "");
-                              setSlug(val);
-                            }}
+															const val = e.target.value
+																.toLowerCase()
+																.replace(/[^a-z0-9-]/g, "");
+															setSlug(val);
+														}}
 													/>
 													<label>Description</label>
 													<Textarea
+														className="break-all"
 														value={description}
 														onChange={(e) =>
 															setDescription(
@@ -358,7 +360,7 @@ export default function RecipeStudio() {
 															setImageFile(
 																e.target
 																	.files?.[0] ??
-																	null
+																null
 															)
 														}
 													/>
@@ -390,7 +392,7 @@ export default function RecipeStudio() {
 													Delete
 												</Button>
 											</DialogTrigger>
-											<DialogContent>
+											<DialogContent aria-describedby="">
 												<DialogHeader>
 													<DialogTitle>
 														Are you sure you want to

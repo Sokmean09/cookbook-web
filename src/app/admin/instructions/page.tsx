@@ -165,7 +165,7 @@ export default function InstructionsStudio() {
 									Add Instruction
 								</Button>
 							</DialogTrigger>
-							<DialogContent>
+							<DialogContent aria-describedby="">
 								<DialogHeader>
 									<DialogTitle>
 										Add New Instruction
@@ -183,6 +183,7 @@ export default function InstructionsStudio() {
 									/>
 									<label>Content</label>
 									<Textarea
+										className="break-all"
 										value={content}
 										onChange={(e) =>
 											setContent(e.target.value)
@@ -266,7 +267,7 @@ export default function InstructionsStudio() {
 													Edit
 												</Button>
 											</DialogTrigger>
-											<DialogContent>
+											<DialogContent aria-describedby="">
 												<DialogHeader>
 													<DialogTitle>
 														Edit Instruction
@@ -289,6 +290,7 @@ export default function InstructionsStudio() {
 													/>
 													<label>Content</label>
 													<Textarea
+														className="break-all"
 														value={content}
 														onChange={(e) =>
 															setContent(
@@ -359,7 +361,7 @@ export default function InstructionsStudio() {
 													Delete
 												</Button>
 											</DialogTrigger>
-											<DialogContent>
+											<DialogContent aria-describedby="">
 												<DialogHeader>
 													<DialogTitle>
 														Are you sure you want to

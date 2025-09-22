@@ -173,7 +173,7 @@ export default function RecipeInfoStudio() {
 									Add Info
 								</Button>
 							</DialogTrigger>
-							<DialogContent>
+							<DialogContent aria-describedby="">
 								<DialogHeader>
 									<DialogTitle>
 										Add New Recipe Info
@@ -287,7 +287,7 @@ export default function RecipeInfoStudio() {
 													Edit
 												</Button>
 											</DialogTrigger>
-											<DialogContent>
+											<DialogContent aria-describedby="">
 												<DialogHeader>
 													<DialogTitle>
 														Edit Recipe Info
@@ -393,7 +393,7 @@ export default function RecipeInfoStudio() {
 													Delete
 												</Button>
 											</DialogTrigger>
-											<DialogContent>
+											<DialogContent aria-describedby="">
 												<DialogHeader>
 													<DialogTitle>
 														Are you sure you want to
